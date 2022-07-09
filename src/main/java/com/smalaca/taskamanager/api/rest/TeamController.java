@@ -2,6 +2,7 @@ package com.smalaca.taskamanager.api.rest;
 
 
 import com.google.common.collect.Iterables;
+import com.smalaca.cqrs.taskmanager.query.team.TeamQueryFacade;
 import com.smalaca.taskamanager.dto.TeamDto;
 import com.smalaca.taskamanager.dto.TeamMembersDto;
 import com.smalaca.taskamanager.exception.TeamNotFoundException;
@@ -26,7 +27,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
 
@@ -36,30 +36,17 @@ import static java.util.stream.Collectors.toList;
 public class TeamController {
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
+    private final TeamQueryFacade teamQueryFacade;
 
     public TeamController(TeamRepository teamRepository, UserRepository userRepository) {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
+        teamQueryFacade = new TeamQueryFacade(teamRepository);
     }
 
     @GetMapping
     public ResponseEntity<List<TeamDto>> findAll() {
-        List<TeamDto> teams = StreamSupport.stream(teamRepository.findAll().spliterator(), false)
-                .map(team -> {
-                    TeamDto dto = new TeamDto();
-                    dto.setId(team.getId());
-                    dto.setName(team.getName());
-
-                    if (team.getCodename() != null) {
-                        dto.setCodenameShort(team.getCodename().getShortName());
-                        dto.setCodenameFull(team.getCodename().getFullName());
-                    }
-
-                    dto.setDescription(team.getDescription());
-
-                    return dto;
-                })
-                .collect(toList());
+        List<TeamDto> teams = teamQueryFacade.findAllTeams();
 
         return new ResponseEntity<>(teams, HttpStatus.OK);
     }
