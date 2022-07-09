@@ -1,6 +1,5 @@
 package com.smalaca.cqrs.taskmanager.command.team;
 
-import com.smalaca.taskamanager.model.embedded.Codename;
 import com.smalaca.taskamanager.model.entities.Team;
 
 import java.util.Optional;
@@ -27,23 +26,9 @@ public class TeamCommandFacade {
     }
 
     public void update(TeamUpdateCommand command) {
-        Team team = teamCommandRepository.findById(command.getId());
+        TeamDomainModel teamDomainModel = teamCommandRepository.findDomainModelById(command.getId());
+        teamDomainModel.update(command);
 
-        if (command.getName() != null) {
-            team.setName(command.getName());
-        }
-
-        if (command.getCodenameShort() != null && command.getCodenameFull() != null) {
-            Codename codename = new Codename();
-            codename.setShortName(command.getCodenameShort());
-            codename.setFullName(command.getCodenameFull());
-            team.setCodename(codename);
-        }
-
-        if (command.getDescription() != null) {
-            team.setDescription(command.getDescription());
-        }
-
-        teamCommandRepository.save(team);
+        teamCommandRepository.save(teamDomainModel);
     }
 }

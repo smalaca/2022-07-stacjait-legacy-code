@@ -1,6 +1,7 @@
 package com.smalaca.acl;
 
 import com.smalaca.cqrs.taskmanager.command.team.TeamCommandRepository;
+import com.smalaca.cqrs.taskmanager.command.team.TeamDomainModel;
 import com.smalaca.cqrs.taskmanager.query.team.TeamQueryRepository;
 import com.smalaca.taskamanager.exception.TeamNotFoundException;
 import com.smalaca.taskamanager.model.entities.Team;
@@ -37,7 +38,18 @@ public class TaskManagerAntiCorruptionLayer implements TeamCommandRepository, Te
     }
 
     @Override
+    public TeamDomainModel findDomainModelById(Long id) {
+        Team team = findById(id);
+        return new TeamDomainModel(team);
+    }
+
+    @Override
     public Iterable<Team> findAll() {
         return teamRepository.findAll();
+    }
+
+    @Override
+    public void save(TeamDomainModel teamDomainModel) {
+        save(teamDomainModel.getTeam());
     }
 }

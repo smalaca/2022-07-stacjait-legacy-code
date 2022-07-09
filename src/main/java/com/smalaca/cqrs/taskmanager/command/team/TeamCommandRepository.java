@@ -7,5 +7,7 @@ public interface TeamCommandRepository {
 
     Long save(Team team);
 
-    Team findById(Long id);
+    void save(TeamDomainModel teamDomainModel);
+
+    TeamDomainModel findDomainModelById(Long id);
 }
