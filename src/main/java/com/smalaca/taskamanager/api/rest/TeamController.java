@@ -7,7 +7,6 @@ import com.smalaca.cqrs.taskmanager.query.team.TeamQueryFacade;
 import com.smalaca.taskamanager.dto.TeamDto;
 import com.smalaca.taskamanager.dto.TeamMembersDto;
 import com.smalaca.taskamanager.exception.TeamNotFoundException;
-import com.smalaca.taskamanager.model.embedded.Codename;
 import com.smalaca.taskamanager.model.entities.Team;
 import com.smalaca.taskamanager.model.entities.User;
 import com.smalaca.taskamanager.repository.TeamRepository;
@@ -92,31 +91,11 @@ public class TeamController {
 
     @PutMapping("/{id}")
     public ResponseEntity<TeamDto> updateTeam(@PathVariable Long id, @RequestBody TeamDto teamDto) {
-        // COMMAND
-        Team team;
-
         try {
-            team = getTeamById(id);
+            teamCommandFacade.update(id, teamDto);
         } catch (TeamNotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        if (teamDto.getName() != null) {
-            team.setName(teamDto.getName());
-        }
-
-        if (teamDto.getCodenameShort() != null && teamDto.getCodenameFull() != null) {
-            Codename codename = new Codename();
-            codename.setShortName(teamDto.getCodenameShort());
-            codename.setFullName(teamDto.getCodenameFull());
-            team.setCodename(codename);
-        }
-
-        if (teamDto.getDescription() != null) {
-            team.setDescription(teamDto.getDescription());
-        }
-
-        teamRepository.save(team);
 
         TeamDto dto = teamQueryFacade.findTeamById(id);
 
