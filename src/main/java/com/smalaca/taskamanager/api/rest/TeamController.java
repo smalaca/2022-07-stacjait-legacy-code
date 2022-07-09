@@ -2,6 +2,7 @@ package com.smalaca.taskamanager.api.rest;
 
 
 import com.google.common.collect.Iterables;
+import com.smalaca.acl.TaskManagerAntiCorruptionLayer;
 import com.smalaca.cqrs.taskmanager.command.team.TeamCommandFacade;
 import com.smalaca.cqrs.taskmanager.query.team.TeamQueryFacade;
 import com.smalaca.taskamanager.dto.TeamDto;
@@ -43,7 +44,7 @@ public class TeamController {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
         teamQueryFacade = new TeamQueryFacade(teamRepository);
-        teamCommandFacade = new TeamCommandFacade(teamRepository);
+        teamCommandFacade = new TeamCommandFacade(teamRepository, new TaskManagerAntiCorruptionLayer(teamRepository));
     }
 
     @GetMapping

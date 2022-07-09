@@ -10,22 +10,24 @@ import java.util.Optional;
 
 public class TeamCommandFacade {
     private final TeamRepository teamRepository;
+    private final TeamCommandRepository teamCommandRepository;
 
-    public TeamCommandFacade(TeamRepository teamRepository) {
+    public TeamCommandFacade(TeamRepository teamRepository, TeamCommandRepository teamCommandRepository) {
         this.teamRepository = teamRepository;
+        this.teamCommandRepository = teamCommandRepository;
     }
 
     public Optional<Long> create(TeamDto teamDto) {
-        boolean doesNotExist = teamRepository.findByName(teamDto.getName()).isPresent();
         Optional<Long> teamId = Optional.empty();
 
-        if (!doesNotExist) {
+        if (teamCommandRepository.notExistsByName(teamDto.getName())) {
             Team team = new Team();
             team.setName(teamDto.getName());
             Team saved = teamRepository.save(team);
 
             teamId = Optional.of(saved.getId());
         }
+
         return teamId;
     }
 
