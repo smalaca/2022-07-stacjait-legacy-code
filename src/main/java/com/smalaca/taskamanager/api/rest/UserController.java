@@ -97,40 +97,11 @@ public class UserController {
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id, @RequestBody UserDto userDto) {
-        User user;
-
         try {
-            user = getUserById(id);
+            userCommandFacade.update(id, userDto);
         } catch (UserNotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        if (userDto.getLogin() != null) {
-            user.setLogin(userDto.getLogin());
-        }
-
-        if (userDto.getPassword() != null) {
-            user.setPassword(userDto.getPassword());
-        }
-
-        if (userDto.getPhoneNumber() != null) {
-            PhoneNumber phoneNumber = new PhoneNumber();
-            phoneNumber.setPrefix(userDto.getPhonePrefix());
-            phoneNumber.setNumber(userDto.getPhoneNumber());
-            user.setPhoneNumber(phoneNumber);
-        }
-
-        if (userDto.getEmailAddress() != null) {
-            EmailAddress emailAddress = new EmailAddress();
-            emailAddress.setEmailAddress(userDto.getEmailAddress());
-            user.setEmailAddress(emailAddress);
-        }
-
-        if (userDto.getTeamRole() != null) {
-            user.setTeamRole(TeamRole.valueOf(userDto.getTeamRole()));
-        }
-        
-        userRepository.save(user);
 
         UserDto response = userQueryFacade.findById(id);
 
