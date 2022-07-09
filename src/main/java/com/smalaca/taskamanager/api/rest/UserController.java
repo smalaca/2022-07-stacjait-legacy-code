@@ -1,6 +1,7 @@
 package com.smalaca.taskamanager.api.rest;
 
 import com.smalaca.cqrs.taskmanager.command.user.UserCommandFacade;
+import com.smalaca.cqrs.taskmanager.command.user.UserCommandRepository;
 import com.smalaca.cqrs.taskmanager.query.user.UserQueryFacade;
 import com.smalaca.taskamanager.dto.UserDto;
 import com.smalaca.taskamanager.exception.UserNotFoundException;
@@ -38,7 +39,7 @@ public class UserController {
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
         userQueryFacade = new UserQueryFacade(userRepository);
-        userCommandFacade = new UserCommandFacade(userRepository);
+        userCommandFacade = new UserCommandFacade(new UserCommandRepository(userRepository));
     }
 
     @GetMapping

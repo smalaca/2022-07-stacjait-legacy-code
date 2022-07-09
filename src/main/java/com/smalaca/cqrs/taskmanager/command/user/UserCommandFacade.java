@@ -1,28 +1,23 @@
 package com.smalaca.cqrs.taskmanager.command.user;
 
 import com.smalaca.taskamanager.dto.UserDto;
-import com.smalaca.taskamanager.exception.UserNotFoundException;
 import com.smalaca.taskamanager.model.embedded.EmailAddress;
 import com.smalaca.taskamanager.model.embedded.PhoneNumber;
 import com.smalaca.taskamanager.model.embedded.UserName;
 import com.smalaca.taskamanager.model.entities.User;
 import com.smalaca.taskamanager.model.enums.TeamRole;
-import com.smalaca.taskamanager.repository.UserRepository;
 
 import java.util.Optional;
 
 public class UserCommandFacade {
-    private final UserRepository userRepository;
+    private final UserCommandRepository userCommandRepository;
 
-    public UserCommandFacade(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserCommandFacade(UserCommandRepository userCommandRepository) {
+        this.userCommandRepository = userCommandRepository;
     }
 
     public Optional<Long> create(UserDto userDto) {
-        boolean doesNotExist = !userRepository.findByUserNameFirstNameAndUserNameLastName(userDto.getFirstName(), userDto.getLastName()).isEmpty();
-        Optional<Long> id = Optional.empty();
-
-        if (!doesNotExist) {
+        if (userCommandRepository.notExistByFirstAndLastName(userDto.getFirstName(), userDto.getLastName())) {
             User user = new User();
             user.setTeamRole(TeamRole.valueOf(userDto.getTeamRole()));
             UserName userName = new UserName();
@@ -32,21 +27,15 @@ public class UserCommandFacade {
             user.setLogin(userDto.getLogin());
             user.setPassword(userDto.getPassword());
 
-            User saved = userRepository.save(user);
-            id = Optional.of(saved.getId());
+            Long id = userCommandRepository.save(user);
+            return Optional.of(id);
+        } else {
+            return Optional.empty();
         }
-        return id;
     }
 
     public void update(Long id, UserDto userDto) {
-        Optional<User> user1;
-        user1 = userRepository.findById(id);
-
-        if (user1.isEmpty()) {
-            throw new UserNotFoundException();
-        }
-
-        User user = user1.get();
+        User user = userCommandRepository.findById(id);
 
         if (userDto.getLogin() != null) {
             user.setLogin(userDto.getLogin());
@@ -73,6 +62,6 @@ public class UserCommandFacade {
             user.setTeamRole(TeamRole.valueOf(userDto.getTeamRole()));
         }
 
-        userRepository.save(user);
+        userCommandRepository.save(user);
     }
 }
