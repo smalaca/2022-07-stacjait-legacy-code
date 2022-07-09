@@ -1,6 +1,8 @@
 package com.smalaca.cqrs.taskmanager.query.team;
 
+import com.smalaca.taskamanager.api.rest.TeamController;
 import com.smalaca.taskamanager.dto.TeamDto;
+import com.smalaca.taskamanager.model.entities.Team;
 import com.smalaca.taskamanager.repository.TeamRepository;
 
 import java.util.List;
@@ -32,5 +34,19 @@ public class TeamQueryFacade {
                     return dto;
                 })
                 .collect(toList());
+    }
+
+    public TeamDto findTeamById(Long id) {
+        Team updated = teamRepository.findById(id).get();
+        TeamDto dto = new TeamDto();
+        dto.setId(updated.getId());
+        dto.setName(updated.getName());
+        if (updated.getCodename() != null) {
+            dto.setCodenameShort(updated.getCodename().getShortName());
+            dto.setCodenameFull(updated.getCodename().getFullName());
+        }
+
+        dto.setDescription(updated.getDescription());
+        return dto;
     }
 }

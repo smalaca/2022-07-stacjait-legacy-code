@@ -92,6 +92,7 @@ public class TeamController {
 
     @PutMapping("/{id}")
     public ResponseEntity<TeamDto> updateTeam(@PathVariable Long id, @RequestBody TeamDto teamDto) {
+        // COMMAND
         Team team;
 
         try {
@@ -115,17 +116,9 @@ public class TeamController {
             team.setDescription(teamDto.getDescription());
         }
 
-        Team updated = teamRepository.save(team);
+        teamRepository.save(team);
 
-        TeamDto dto = new TeamDto();
-        dto.setId(updated.getId());
-        dto.setName(updated.getName());
-        if (updated.getCodename() != null) {
-            dto.setCodenameShort(updated.getCodename().getShortName());
-            dto.setCodenameFull(updated.getCodename().getFullName());
-        }
-
-        dto.setDescription(updated.getDescription());
+        TeamDto dto = teamQueryFacade.findTeamById(id);
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
