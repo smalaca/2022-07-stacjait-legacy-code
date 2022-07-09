@@ -3,6 +3,7 @@ package com.smalaca.taskamanager.api.rest;
 import com.smalaca.acl.AntiCorruptionLayer;
 import com.smalaca.cqrs.taskmanager.command.user.UserCommandFacade;
 import com.smalaca.cqrs.taskmanager.command.user.UserCreateCommand;
+import com.smalaca.cqrs.taskmanager.command.user.UserUpdateCommand;
 import com.smalaca.cqrs.taskmanager.query.user.UserQueryFacade;
 import com.smalaca.taskamanager.dto.UserDto;
 import com.smalaca.taskamanager.exception.UserNotFoundException;
@@ -80,7 +81,19 @@ public class UserController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id, @RequestBody UserDto userDto) {
         try {
-            userCommandFacade.update(id, userDto);
+            UserUpdateCommand.UserUpdateCommandBuilder builder = UserUpdateCommand.builder().id(id);
+
+            if (userDto != null) {
+                builder
+                        .teamRole(userDto.getTeamRole())
+                        .login(userDto.getLogin())
+                        .password(userDto.getPassword())
+                        .phonePrefix(userDto.getPhonePrefix())
+                        .phoneNumber(userDto.getPhoneNumber())
+                        .emailAddress(userDto.getEmailAddress());
+            }
+
+            userCommandFacade.update(builder.build());
         } catch (UserNotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

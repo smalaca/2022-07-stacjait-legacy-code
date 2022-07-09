@@ -1,6 +1,5 @@
 package com.smalaca.cqrs.taskmanager.command.user;
 
-import com.smalaca.taskamanager.dto.UserDto;
 import com.smalaca.taskamanager.model.embedded.EmailAddress;
 import com.smalaca.taskamanager.model.embedded.PhoneNumber;
 import com.smalaca.taskamanager.model.embedded.UserName;
@@ -34,32 +33,32 @@ public class UserCommandFacade {
         }
     }
 
-    public void update(Long id, UserDto userDto) {
-        User user = userCommandRepository.findById(id);
+    public void update(UserUpdateCommand command) {
+        User user = userCommandRepository.findById(command.getId());
 
-        if (userDto.getLogin() != null) {
-            user.setLogin(userDto.getLogin());
+        if (command.getLogin() != null) {
+            user.setLogin(command.getLogin());
         }
 
-        if (userDto.getPassword() != null) {
-            user.setPassword(userDto.getPassword());
+        if (command.getPassword() != null) {
+            user.setPassword(command.getPassword());
         }
 
-        if (userDto.getPhoneNumber() != null) {
+        if (command.getPhoneNumber() != null) {
             PhoneNumber phoneNumber = new PhoneNumber();
-            phoneNumber.setPrefix(userDto.getPhonePrefix());
-            phoneNumber.setNumber(userDto.getPhoneNumber());
+            phoneNumber.setPrefix(command.getPhonePrefix());
+            phoneNumber.setNumber(command.getPhoneNumber());
             user.setPhoneNumber(phoneNumber);
         }
 
-        if (userDto.getEmailAddress() != null) {
+        if (command.getEmailAddress() != null) {
             EmailAddress emailAddress = new EmailAddress();
-            emailAddress.setEmailAddress(userDto.getEmailAddress());
+            emailAddress.setEmailAddress(command.getEmailAddress());
             user.setEmailAddress(emailAddress);
         }
 
-        if (userDto.getTeamRole() != null) {
-            user.setTeamRole(TeamRole.valueOf(userDto.getTeamRole()));
+        if (command.getTeamRole() != null) {
+            user.setTeamRole(TeamRole.valueOf(command.getTeamRole()));
         }
 
         userCommandRepository.save(user);
