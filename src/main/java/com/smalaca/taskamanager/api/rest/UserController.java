@@ -130,30 +130,9 @@ public class UserController {
             user.setTeamRole(TeamRole.valueOf(userDto.getTeamRole()));
         }
         
-        User updated = userRepository.save(user);
+        userRepository.save(user);
 
-        UserDto response = new UserDto();
-        response.setId(updated.getId());
-        response.setFirstName(updated.getUserName().getFirstName());
-        response.setLastName(updated.getUserName().getLastName());
-        response.setLogin(updated.getLogin());
-        response.setPassword(updated.getPassword());
-
-        TeamRole teamRole = updated.getTeamRole();
-        if (teamRole != null) {
-            response.setTeamRole(teamRole.name());
-        }
-
-        PhoneNumber phoneNumber = updated.getPhoneNumber();
-        if (phoneNumber != null) {
-            response.setPhonePrefix(phoneNumber.getPrefix());
-            response.setPhoneNumber(phoneNumber.getNumber());
-        }
-
-        EmailAddress emailAddress = updated.getEmailAddress();
-        if (emailAddress != null) {
-            response.setEmailAddress(emailAddress.getEmailAddress());
-        }
+        UserDto response = userQueryFacade.findById(id);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

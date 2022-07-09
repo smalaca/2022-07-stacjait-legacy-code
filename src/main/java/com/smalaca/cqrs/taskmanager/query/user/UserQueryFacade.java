@@ -48,4 +48,31 @@ public class UserQueryFacade {
         }
         return usersDtos;
     }
+
+    public UserDto findById(Long id) {
+        User updated = userRepository.findById(id).get();
+        UserDto response = new UserDto();
+        response.setId(updated.getId());
+        response.setFirstName(updated.getUserName().getFirstName());
+        response.setLastName(updated.getUserName().getLastName());
+        response.setLogin(updated.getLogin());
+        response.setPassword(updated.getPassword());
+
+        TeamRole teamRole = updated.getTeamRole();
+        if (teamRole != null) {
+            response.setTeamRole(teamRole.name());
+        }
+
+        PhoneNumber phoneNumber = updated.getPhoneNumber();
+        if (phoneNumber != null) {
+            response.setPhonePrefix(phoneNumber.getPrefix());
+            response.setPhoneNumber(phoneNumber.getNumber());
+        }
+
+        EmailAddress emailAddress = updated.getEmailAddress();
+        if (emailAddress != null) {
+            response.setEmailAddress(emailAddress.getEmailAddress());
+        }
+        return response;
+    }
 }
