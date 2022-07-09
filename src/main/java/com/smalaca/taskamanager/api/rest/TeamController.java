@@ -44,7 +44,7 @@ public class TeamController {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
         teamQueryFacade = new TeamQueryFacade(teamRepository);
-        teamCommandFacade = new TeamCommandFacade(teamRepository, new TaskManagerAntiCorruptionLayer(teamRepository));
+        teamCommandFacade = new TeamCommandFacade(new TaskManagerAntiCorruptionLayer(teamRepository));
     }
 
     @GetMapping

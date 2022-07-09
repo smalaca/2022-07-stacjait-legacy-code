@@ -6,4 +6,6 @@ public interface TeamCommandRepository {
     boolean notExistsByName(String name);
 
     Long save(Team team);
+
+    Team findById(Long id);
 }

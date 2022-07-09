@@ -1,19 +1,15 @@
 package com.smalaca.cqrs.taskmanager.command.team;
 
 import com.smalaca.taskamanager.dto.TeamDto;
-import com.smalaca.taskamanager.exception.TeamNotFoundException;
 import com.smalaca.taskamanager.model.embedded.Codename;
 import com.smalaca.taskamanager.model.entities.Team;
-import com.smalaca.taskamanager.repository.TeamRepository;
 
 import java.util.Optional;
 
 public class TeamCommandFacade {
-    private final TeamRepository teamRepository;
     private final TeamCommandRepository teamCommandRepository;
 
-    public TeamCommandFacade(TeamRepository teamRepository, TeamCommandRepository teamCommandRepository) {
-        this.teamRepository = teamRepository;
+    public TeamCommandFacade(TeamCommandRepository teamCommandRepository) {
         this.teamCommandRepository = teamCommandRepository;
     }
 
@@ -32,13 +28,7 @@ public class TeamCommandFacade {
     }
 
     public void update(Long id, TeamDto teamDto) {
-        Optional<Team> team1 = teamRepository.findById(id);
-
-        if (team1.isEmpty()) {
-            throw new TeamNotFoundException();
-        }
-
-        Team team = team1.get();
+        Team team = teamCommandRepository.findById(id);
 
         if (teamDto.getName() != null) {
             team.setName(teamDto.getName());
