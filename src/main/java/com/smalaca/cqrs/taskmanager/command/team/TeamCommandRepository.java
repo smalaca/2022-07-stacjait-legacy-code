@@ -1,13 +1,9 @@
 package com.smalaca.cqrs.taskmanager.command.team;
 
-import com.smalaca.taskamanager.model.entities.Team;
-
 public interface TeamCommandRepository {
     boolean notExistsByName(String name);
 
-    Long save(Team team);
-
-    void save(TeamDomainModel teamDomainModel);
+    Long save(TeamDomainModel teamDomainModel);
 
     TeamDomainModel findDomainModelById(Long id);
 }

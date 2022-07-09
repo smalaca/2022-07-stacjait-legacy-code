@@ -1,7 +1,5 @@
 package com.smalaca.cqrs.taskmanager.command.team;
 
-import com.smalaca.taskamanager.model.entities.Team;
-
 import java.util.Optional;
 
 public class TeamCommandFacade {
@@ -12,17 +10,14 @@ public class TeamCommandFacade {
     }
 
     public Optional<Long> create(String name) {
-        Optional<Long> teamId = Optional.empty();
-
         if (teamCommandRepository.notExistsByName(name)) {
-            Team team = new Team();
-            team.setName(name);
-            Long id = teamCommandRepository.save(team);
+            TeamDomainModel teamDomainModel = TeamDomainModel.create(name);
+            Long id = teamCommandRepository.save(teamDomainModel);
 
-            teamId = Optional.of(id);
+            return Optional.of(id);
+        } else {
+            return Optional.empty();
         }
-
-        return teamId;
     }
 
     public void update(TeamUpdateCommand command) {

@@ -22,11 +22,6 @@ public class TaskManagerAntiCorruptionLayer implements TeamCommandRepository, Te
     }
 
     @Override
-    public Long save(Team team) {
-        return teamRepository.save(team).getId();
-    }
-
-    @Override
     public Team findById(Long id) {
         Optional<Team> found = teamRepository.findById(id);
 
@@ -49,7 +44,8 @@ public class TaskManagerAntiCorruptionLayer implements TeamCommandRepository, Te
     }
 
     @Override
-    public void save(TeamDomainModel teamDomainModel) {
-        save(teamDomainModel.getTeam());
+    public Long save(TeamDomainModel teamDomainModel) {
+        Team team = teamDomainModel.getTeam();
+        return teamRepository.save(team).getId();
     }
 }

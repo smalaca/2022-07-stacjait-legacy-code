@@ -10,6 +10,12 @@ public class TeamDomainModel {
         this.team = team;
     }
 
+    static TeamDomainModel create(String name) {
+        Team team = new Team();
+        team.setName(name);
+        return new TeamDomainModel(team);
+    }
+
     void update(TeamUpdateCommand command) {
         if (command.getName() != null) {
             team.setName(command.getName());
