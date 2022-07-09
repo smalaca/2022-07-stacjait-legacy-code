@@ -1,9 +1,7 @@
 package com.smalaca.cqrs.taskmanager.query.team;
 
-import com.smalaca.taskamanager.api.rest.TeamController;
 import com.smalaca.taskamanager.dto.TeamDto;
 import com.smalaca.taskamanager.model.entities.Team;
-import com.smalaca.taskamanager.repository.TeamRepository;
 
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -11,14 +9,14 @@ import java.util.stream.StreamSupport;
 import static java.util.stream.Collectors.toList;
 
 public class TeamQueryFacade {
-    private final TeamRepository teamRepository;
+    private final TeamQueryRepository teamQueryRepository;
 
-    public TeamQueryFacade(TeamRepository teamRepository) {
-        this.teamRepository = teamRepository;
+    public TeamQueryFacade(TeamQueryRepository teamQueryRepository) {
+        this.teamQueryRepository = teamQueryRepository;
     }
 
     public List<TeamDto> findAllTeams() {
-        return StreamSupport.stream(teamRepository.findAll().spliterator(), false)
+        return StreamSupport.stream(teamQueryRepository.findAll().spliterator(), false)
                 .map(team -> {
                     TeamDto dto = new TeamDto();
                     dto.setId(team.getId());
@@ -37,7 +35,7 @@ public class TeamQueryFacade {
     }
 
     public TeamDto findTeamById(Long id) {
-        Team updated = teamRepository.findById(id).get();
+        Team updated = teamQueryRepository.findById(id);
         TeamDto dto = new TeamDto();
         dto.setId(updated.getId());
         dto.setName(updated.getName());
@@ -49,4 +47,5 @@ public class TeamQueryFacade {
         dto.setDescription(updated.getDescription());
         return dto;
     }
+
 }

@@ -1,13 +1,14 @@
 package com.smalaca.acl;
 
 import com.smalaca.cqrs.taskmanager.command.team.TeamCommandRepository;
+import com.smalaca.cqrs.taskmanager.query.team.TeamQueryRepository;
 import com.smalaca.taskamanager.exception.TeamNotFoundException;
 import com.smalaca.taskamanager.model.entities.Team;
 import com.smalaca.taskamanager.repository.TeamRepository;
 
 import java.util.Optional;
 
-public class TaskManagerAntiCorruptionLayer implements TeamCommandRepository {
+public class TaskManagerAntiCorruptionLayer implements TeamCommandRepository, TeamQueryRepository {
     private final TeamRepository teamRepository;
 
     public TaskManagerAntiCorruptionLayer(TeamRepository teamRepository) {
@@ -33,5 +34,10 @@ public class TaskManagerAntiCorruptionLayer implements TeamCommandRepository {
         }
 
         return found.get();
+    }
+
+    @Override
+    public Iterable<Team> findAll() {
+        return teamRepository.findAll();
     }
 }
