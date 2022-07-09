@@ -7,5 +7,7 @@ public interface UserCommandRepository {
 
     Long save(User user);
 
-    User findById(Long id);
+    Long save(UserDomainModel user);
+
+    UserDomainModel findUserById(Long id);
 }

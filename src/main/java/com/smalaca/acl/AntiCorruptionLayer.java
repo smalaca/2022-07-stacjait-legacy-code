@@ -1,6 +1,7 @@
 package com.smalaca.acl;
 
 import com.smalaca.cqrs.taskmanager.command.user.UserCommandRepository;
+import com.smalaca.cqrs.taskmanager.command.user.UserDomainModel;
 import com.smalaca.cqrs.taskmanager.query.user.UserQueryRepository;
 import com.smalaca.taskamanager.exception.UserNotFoundException;
 import com.smalaca.taskamanager.model.entities.User;
@@ -18,6 +19,16 @@ public class AntiCorruptionLayer implements UserCommandRepository, UserQueryRepo
     @Override
     public boolean notExistByFirstAndLastName(String firstName, String lastName) {
         return userRepository.findByUserNameFirstNameAndUserNameLastName(firstName, lastName).isEmpty();
+    }
+
+    @Override
+    public Long save(UserDomainModel user) {
+        return save(user.getUser());
+    }
+
+    @Override
+    public UserDomainModel findUserById(Long id) {
+        return new UserDomainModel(findById(id));
     }
 
     @Override
