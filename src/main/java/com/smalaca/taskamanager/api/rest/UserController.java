@@ -1,5 +1,6 @@
 package com.smalaca.taskamanager.api.rest;
 
+import com.smalaca.cqrs.taskmanager.query.user.UserQueryFacade;
 import com.smalaca.taskamanager.dto.UserDto;
 import com.smalaca.taskamanager.exception.UserNotFoundException;
 import com.smalaca.taskamanager.model.embedded.EmailAddress;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,42 +31,17 @@ import java.util.Optional;
 @SuppressWarnings("checkstyle:ClassFanOutComplexity")
 public class UserController {
     private final UserRepository userRepository;
+    private final UserQueryFacade userQueryFacade;
 
     @Autowired
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
+        userQueryFacade = new UserQueryFacade(userRepository);
     }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
-        List<UserDto> usersDtos = new ArrayList<>();
-
-        for (User user : userRepository.findAll()) {
-            UserDto userDto = new UserDto();
-            userDto.setId(user.getId());
-            userDto.setFirstName(user.getUserName().getFirstName());
-            userDto.setLastName(user.getUserName().getLastName());
-            userDto.setLogin(user.getLogin());
-            userDto.setPassword(user.getPassword());
-
-            TeamRole teamRole = user.getTeamRole();
-            if (teamRole != null) {
-                userDto.setTeamRole(teamRole.name());
-            }
-
-            PhoneNumber phoneNumber = user.getPhoneNumber();
-            if (phoneNumber != null) {
-                userDto.setPhonePrefix(phoneNumber.getPrefix());
-                userDto.setPhoneNumber(phoneNumber.getNumber());
-            }
-
-            EmailAddress emailAddress = user.getEmailAddress();
-            if (emailAddress != null) {
-                userDto.setEmailAddress(emailAddress.getEmailAddress());
-            }
-
-            usersDtos.add(userDto);
-        }
+        List<UserDto> usersDtos = userQueryFacade.findAllUsers();
 
         return new ResponseEntity<>(usersDtos, HttpStatus.OK);
     }
