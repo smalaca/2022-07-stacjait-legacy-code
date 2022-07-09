@@ -2,6 +2,7 @@ package com.smalaca.taskamanager.api.rest;
 
 import com.smalaca.acl.AntiCorruptionLayer;
 import com.smalaca.cqrs.taskmanager.command.user.UserCommandFacade;
+import com.smalaca.cqrs.taskmanager.command.user.UserCreateCommand;
 import com.smalaca.cqrs.taskmanager.query.user.UserQueryFacade;
 import com.smalaca.taskamanager.dto.UserDto;
 import com.smalaca.taskamanager.exception.UserNotFoundException;
@@ -58,7 +59,14 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Void> createUser(@RequestBody UserDto userDto, UriComponentsBuilder uriComponentsBuilder) {
-        Optional<Long> id = userCommandFacade.create(userDto);
+        UserCreateCommand command = UserCreateCommand.builder()
+                .firstName(userDto.getFirstName())
+                .lastName(userDto.getLastName())
+                .teamRole(userDto.getTeamRole())
+                .login(userDto.getLogin())
+                .password(userDto.getPassword())
+                .build();
+        Optional<Long> id = userCommandFacade.create(command);
 
         if (id.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);

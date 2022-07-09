@@ -16,16 +16,16 @@ public class UserCommandFacade {
         this.userCommandRepository = userCommandRepository;
     }
 
-    public Optional<Long> create(UserDto userDto) {
-        if (userCommandRepository.notExistByFirstAndLastName(userDto.getFirstName(), userDto.getLastName())) {
+    public Optional<Long> create(UserCreateCommand command) {
+        if (userCommandRepository.notExistByFirstAndLastName(command.getFirstName(), command.getLastName())) {
             User user = new User();
-            user.setTeamRole(TeamRole.valueOf(userDto.getTeamRole()));
+            user.setTeamRole(TeamRole.valueOf(command.getTeamRole()));
             UserName userName = new UserName();
-            userName.setFirstName(userDto.getFirstName());
-            userName.setLastName(userDto.getLastName());
+            userName.setFirstName(command.getFirstName());
+            userName.setLastName(command.getLastName());
             user.setUserName(userName);
-            user.setLogin(userDto.getLogin());
-            user.setPassword(userDto.getPassword());
+            user.setLogin(command.getLogin());
+            user.setPassword(command.getPassword());
 
             Long id = userCommandRepository.save(user);
             return Optional.of(id);
