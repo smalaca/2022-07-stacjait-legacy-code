@@ -23,9 +23,9 @@ public class TeamCommandFacade {
         if (teamCommandRepository.notExistsByName(teamDto.getName())) {
             Team team = new Team();
             team.setName(teamDto.getName());
-            Team saved = teamRepository.save(team);
+            Long id = teamCommandRepository.save(team);
 
-            teamId = Optional.of(saved.getId());
+            teamId = Optional.of(id);
         }
 
         return teamId;
@@ -55,6 +55,6 @@ public class TeamCommandFacade {
             team.setDescription(teamDto.getDescription());
         }
 
-        teamRepository.save(team);
+        teamCommandRepository.save(team);
     }
 }
