@@ -4,6 +4,7 @@ package com.smalaca.taskamanager.api.rest;
 import com.google.common.collect.Iterables;
 import com.smalaca.acl.TaskManagerAntiCorruptionLayer;
 import com.smalaca.cqrs.taskmanager.command.team.TeamCommandFacade;
+import com.smalaca.cqrs.taskmanager.command.team.TeamUpdateCommand;
 import com.smalaca.cqrs.taskmanager.query.team.TeamQueryFacade;
 import com.smalaca.taskamanager.dto.TeamDto;
 import com.smalaca.taskamanager.dto.TeamMembersDto;
@@ -80,7 +81,7 @@ public class TeamController {
 
     @PostMapping
     public ResponseEntity<Void> createTeam(@RequestBody TeamDto teamDto, UriComponentsBuilder uriComponentsBuilder) {
-        Optional<Long> teamId = teamCommandFacade.create(teamDto);
+        Optional<Long> teamId = teamCommandFacade.create(teamDto.getName());
 
         if (teamId.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -94,7 +95,18 @@ public class TeamController {
     @PutMapping("/{id}")
     public ResponseEntity<TeamDto> updateTeam(@PathVariable Long id, @RequestBody TeamDto teamDto) {
         try {
-            teamCommandFacade.update(id, teamDto);
+            TeamUpdateCommand.TeamUpdateCommandBuilder builder = TeamUpdateCommand.builder()
+                    .id(id);
+
+            if (teamDto != null) {
+                builder
+                        .name(teamDto.getName())
+                        .codenameShort(teamDto.getCodenameShort())
+                        .codenameFull(teamDto.getCodenameFull())
+                        .description(teamDto.getDescription());
+            }
+
+            teamCommandFacade.update(builder.build());
         } catch (TeamNotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

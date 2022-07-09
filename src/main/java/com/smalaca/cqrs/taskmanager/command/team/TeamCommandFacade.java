@@ -1,6 +1,5 @@
 package com.smalaca.cqrs.taskmanager.command.team;
 
-import com.smalaca.taskamanager.dto.TeamDto;
 import com.smalaca.taskamanager.model.embedded.Codename;
 import com.smalaca.taskamanager.model.entities.Team;
 
@@ -13,12 +12,12 @@ public class TeamCommandFacade {
         this.teamCommandRepository = teamCommandRepository;
     }
 
-    public Optional<Long> create(TeamDto teamDto) {
+    public Optional<Long> create(String name) {
         Optional<Long> teamId = Optional.empty();
 
-        if (teamCommandRepository.notExistsByName(teamDto.getName())) {
+        if (teamCommandRepository.notExistsByName(name)) {
             Team team = new Team();
-            team.setName(teamDto.getName());
+            team.setName(name);
             Long id = teamCommandRepository.save(team);
 
             teamId = Optional.of(id);
@@ -27,22 +26,22 @@ public class TeamCommandFacade {
         return teamId;
     }
 
-    public void update(Long id, TeamDto teamDto) {
-        Team team = teamCommandRepository.findById(id);
+    public void update(TeamUpdateCommand command) {
+        Team team = teamCommandRepository.findById(command.getId());
 
-        if (teamDto.getName() != null) {
-            team.setName(teamDto.getName());
+        if (command.getName() != null) {
+            team.setName(command.getName());
         }
 
-        if (teamDto.getCodenameShort() != null && teamDto.getCodenameFull() != null) {
+        if (command.getCodenameShort() != null && command.getCodenameFull() != null) {
             Codename codename = new Codename();
-            codename.setShortName(teamDto.getCodenameShort());
-            codename.setFullName(teamDto.getCodenameFull());
+            codename.setShortName(command.getCodenameShort());
+            codename.setFullName(command.getCodenameFull());
             team.setCodename(codename);
         }
 
-        if (teamDto.getDescription() != null) {
-            team.setDescription(teamDto.getDescription());
+        if (command.getDescription() != null) {
+            team.setDescription(command.getDescription());
         }
 
         teamCommandRepository.save(team);
