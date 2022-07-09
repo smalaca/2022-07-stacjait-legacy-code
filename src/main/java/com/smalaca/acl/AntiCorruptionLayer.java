@@ -1,13 +1,14 @@
 package com.smalaca.acl;
 
 import com.smalaca.cqrs.taskmanager.command.user.UserCommandRepository;
+import com.smalaca.cqrs.taskmanager.query.user.UserQueryRepository;
 import com.smalaca.taskamanager.exception.UserNotFoundException;
 import com.smalaca.taskamanager.model.entities.User;
 import com.smalaca.taskamanager.repository.UserRepository;
 
 import java.util.Optional;
 
-public class AntiCorruptionLayer implements UserCommandRepository {
+public class AntiCorruptionLayer implements UserCommandRepository, UserQueryRepository {
     private final UserRepository userRepository;
 
     public AntiCorruptionLayer(UserRepository userRepository) {
@@ -34,5 +35,10 @@ public class AntiCorruptionLayer implements UserCommandRepository {
         }
 
         return found.get();
+    }
+
+    @Override
+    public Iterable<User> findAll() {
+        return userRepository.findAll();
     }
 }

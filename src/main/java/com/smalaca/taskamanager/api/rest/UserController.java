@@ -38,8 +38,9 @@ public class UserController {
     @Autowired
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        userQueryFacade = new UserQueryFacade(userRepository);
-        userCommandFacade = new UserCommandFacade(new AntiCorruptionLayer(userRepository));
+        AntiCorruptionLayer antiCorruptionLayer = new AntiCorruptionLayer(userRepository);
+        userQueryFacade = new UserQueryFacade(antiCorruptionLayer);
+        userCommandFacade = new UserCommandFacade(antiCorruptionLayer);
     }
 
     @GetMapping

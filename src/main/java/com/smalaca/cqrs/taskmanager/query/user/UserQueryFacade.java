@@ -5,22 +5,21 @@ import com.smalaca.taskamanager.model.embedded.EmailAddress;
 import com.smalaca.taskamanager.model.embedded.PhoneNumber;
 import com.smalaca.taskamanager.model.entities.User;
 import com.smalaca.taskamanager.model.enums.TeamRole;
-import com.smalaca.taskamanager.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserQueryFacade {
-    private final UserRepository userRepository;
+    private final UserQueryRepository userQueryRepository;
 
-    public UserQueryFacade(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserQueryFacade(UserQueryRepository userQueryRepository) {
+        this.userQueryRepository = userQueryRepository;
     }
 
     public List<UserDto> findAllUsers() {
         List<UserDto> usersDtos = new ArrayList<>();
 
-        for (User user : userRepository.findAll()) {
+        for (User user : userQueryRepository.findAll()) {
             UserDto userDto = new UserDto();
             userDto.setId(user.getId());
             userDto.setFirstName(user.getUserName().getFirstName());
@@ -50,7 +49,7 @@ public class UserQueryFacade {
     }
 
     public UserDto findById(Long id) {
-        User updated = userRepository.findById(id).get();
+        User updated = userQueryRepository.findById(id);
         UserDto response = new UserDto();
         response.setId(updated.getId());
         response.setFirstName(updated.getUserName().getFirstName());
